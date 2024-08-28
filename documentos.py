@@ -10,7 +10,7 @@ import re
 # pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 # Lista de documentos PDF a procesar
-documentos = ['CCO.pdf']  # Agrega los nombres de tus documentos PDF
+documentos = ['NOM.pdf']  # Agrega los nombres de tus documentos PDF
 
 def extraer_texto_de_pagina(pdf_path, pagina_num):
     # Convertir la página del PDF en una imagen
@@ -23,22 +23,6 @@ def extraer_texto_de_pagina(pdf_path, pagina_num):
     texto = pytesseract.image_to_string(gray)
     
     return texto
-
-def extraer_fecha_documento(texto):
-    # Buscar la fecha del documento en el texto
-    fecha_documento = None
-    
-    # Busca la fecha del documento
-    match_fecha = re.search(r'Fecha del Documento:\s*([\d/]+)', texto)
-    if match_fecha:
-        fecha_documento_str = match_fecha.group(1)
-        try:
-            fecha_documento = datetime.strptime(fecha_documento_str, '%d/%m/%Y')
-        except ValueError:
-            # Manejar errores en el formato de la fecha
-            fecha_documento = None
-    
-    return fecha_documento
 
 # Procesar cada documento
 for documento in documentos:
@@ -59,17 +43,7 @@ for documento in documentos:
         # Verificar la condición de "SITUACIÓN ACTUAL: ACTIVA"
         if "SITUACION ACTUAL: ACTIVA" in texto_completo:
             print("La situación actual es 'ACTIVA'.")
-            
-            # Extraer y verificar la fecha del documento
-            fecha_documento = extraer_fecha_documento(texto_completo)
-            fecha_actual = datetime.now()
-            fecha_limite = fecha_actual - timedelta(days=5)
-            
-            # Verificar que la fecha del documento sea igual o menor a 5 días antes de la fecha actual
-            if fecha_documento and fecha_documento >= fecha_limite and fecha_documento == fecha_actual:
-                print(f"El documento {documento} cumple con las condiciones.")
-            else:
-                print(f"El documento {documento} NO cumple con la condición de fecha.")
+                      
         else:
             print(f"El documento {documento} NO cumple con la condición de 'SITUACIÓN ACTUAL: ACTIVA'.")
     else:
